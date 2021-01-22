@@ -1,1 +1,1 @@
-$vcenter_pass=secretpassword
+$vcenter_pass=

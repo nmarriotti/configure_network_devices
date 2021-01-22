@@ -1,6 +1,6 @@
 en
 config t
-aaa authentication login Dell-Switches radius local enable
+aaa authentication login Dell-Switches radius local
 aaa authorization exec Dell-Switches radius if-authenticated
 radius-server host DOMAIN_CONTROLLER_IP key VCENTER_PASSWORD
 line vty 0

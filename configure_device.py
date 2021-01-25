@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--password", required=True, help="Account password")
     parser.add_argument("--enablepass", required=True, help="Enable password")
     parser.add_argument("--commands", required=True, help="File containing commands to execute")
-    parser.add_argument("--verbose", required=False, default=False, help="Print device output to screen")
+    parser.add_argument("--verbose", required=False, action='store_true', help="Print device output to screen")
     args = parser.parse_args()
 
 	# Set global variables from command-line arguments

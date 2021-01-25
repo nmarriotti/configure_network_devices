@@ -27,8 +27,9 @@ class Telnet():
         return False
 
 
-    ''' enable mode '''
+
     def activateEnableMode(self):
+        ''' enable mode '''
         self.enable_mode_requested = False
         data = self.tn.read_until(b"Password:",5)
         if b"Password:" in data:
@@ -40,8 +41,9 @@ class Telnet():
         return False
 
 
-    ''' Send command '''
+
     def write(self, cmd, sleeptime=0.0):
+        ''' Send command '''
         if cmd in self.enable_commands:
             self.tn.write(cmd.encode('ascii') + b"\n")
             time.sleep(sleeptime)
@@ -53,8 +55,9 @@ class Telnet():
         return self.tn.read_very_eager()
         
 
-    ''' Login '''
+
     def connect(self, auth, en_password=None, timeout=10):
+        ''' Login '''
         self.AUTH = auth
         self.enablepassword = en_password
 
@@ -95,8 +98,9 @@ class Telnet():
         return False
 
 
-    ''' Close the telnet connection '''
+
     def disconnect(self):
+        ''' Close the telnet connection '''
         self.tn.close()
 
 
@@ -115,8 +119,9 @@ class SSH():
         self.PROTOCOL = "SSH"
 
 
-    ''' Login '''
+
     def connect(self, auth, en_password=None, timeout=10):
+        ''' Login '''
         self.AUTH = auth
         self.enablepassword = en_password
         self.ssh = paramiko.SSHClient()
@@ -136,8 +141,9 @@ class SSH():
         return False
     
 
-    ''' Reads the command output '''
+
     def get_command_results(self):
+        ''' Reads the command output '''
         maxseconds = 3
         bufsize = 1024
 
@@ -173,8 +179,9 @@ class SSH():
         return output
 
 
-    ''' enable mode '''
+
     def activateEnableMode(self, output):
+        ''' enable mode '''
         self.enable_mode_requested = False
         if b"Password:" in output:
             output = self.write(self.enablepassword, 4.0)[-1]
@@ -185,8 +192,9 @@ class SSH():
         return False
 
 
-    ''' Send command '''
+
     def write(self, cmd, sleeptime=0.0):
+        ''' Send command '''
         self.shell.send(cmd + '\n')
         output = self.get_command_results()
         if cmd in self.enable_commands:
@@ -195,6 +203,6 @@ class SSH():
         return output
         
 
-    ''' Close the SSH connection '''
     def disconnect(self):
+        ''' Close the SSH connection '''
         self.ssh.close

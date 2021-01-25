@@ -1,6 +1,7 @@
 import importlib
 
 class Builder:
+    ''' Imports a class name equivalent to a string value '''
     def __init__(self):
         pass
 
@@ -8,9 +9,11 @@ class Builder:
         targetClass = None
         try:
             module = importlib.import_module('.protocols', "classes")
+			# Import the class name contained in variable 'protocol' 
+			# which resides in the classes.protocols module
             targetClass = getattr(module, protocol)
         except Exception as e:
             print(str(e))
 
-        #print("Protocol: {0}".format(protocol))
+        print("Protocol: {0}".format(protocol))
         return targetClass

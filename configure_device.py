@@ -62,7 +62,7 @@ def run(commands):
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
             print("No ports available, skipping device...")
-            sys.exit(1)
+            continue
 
         # Creates appropriate object based on protocol
         device = Builder().construct(protocol)
@@ -96,10 +96,12 @@ if __name__ == "__main__":
     parser.add_argument("commands", help="File containing commands to execute")
     args = parser.parse_args()
 
+	# Set global variables from command-line arguments
     local_credentials = (args.username, args.password)
     enable_password = args.enablepass
 
-    command_list = FileToList(args.commands)
+    command_list = FileToList(args.commands)\
+	
     if command_list:
         run(command_list)
     else:

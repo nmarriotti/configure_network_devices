@@ -1,16 +1,19 @@
-import os
+import os, sys
 
 def FileToList(f):
-    if os.path.exists(f):
+    try:
         l = []
         with open(f, 'r') as x:
             for line in x.readlines():
                 l.append(line.strip())
         return l
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
     return False
 
 def FileToDict(f, delimiter, remove_quotes=False):
-    if os.path.exists(f):
+    try:
         d = {}
         with open(f, 'r') as x:
             for line in x.readlines():
@@ -23,4 +26,7 @@ def FileToDict(f, delimiter, remove_quotes=False):
                 except:
                     pass
         return d
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
     return False

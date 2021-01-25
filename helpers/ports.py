@@ -1,4 +1,5 @@
 import socket
+import time
 
 protocols = {
     22: "SSH",

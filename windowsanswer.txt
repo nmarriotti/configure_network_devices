@@ -1,4 +1,4 @@
-domain_identifier=
-ap01_ip=
-user=
-pass=
+domain_identifier=HOMELAB
+ap01_ip=192.168.1.144
+user=Administrator
+pass=1q2w3e4r!Q@W#E$R

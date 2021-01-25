@@ -15,5 +15,4 @@ class Builder:
         except Exception as e:
             print(str(e))
 
-        print("Protocol: {0}".format(protocol))
         return targetClass

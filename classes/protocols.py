@@ -32,7 +32,6 @@ class Telnet():
         ''' enable mode '''
         self.enable_mode_requested = False
         data = self.tn.read_until(b"Password:",5)
-        print(data)
         if b"Password:" in data:
             response = self.write(self.enablepassword, 1.0)
             if b"#" in response:
@@ -65,7 +64,6 @@ class Telnet():
         # Must wait a few seconds for previous socket remnants to be cleaned update
         time.sleep(3)
         
-        print("\nConnecting to {0}:{1} as {2}...".format(self.IPADDR, self.PORT, auth[0]))
         try:
             # Connect
             self.tn = telnetlib.Telnet(self.IPADDR, self.PORT, timeout)
@@ -84,7 +82,6 @@ class Telnet():
                 time.sleep(2.0)
             # char '>' signifies successful login
             data = self.tn.read_until(b">", 20)
-            print(data.decode('utf-8'))
 
             if not b">" in data:
                 return False
@@ -125,10 +122,6 @@ class SSH():
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        # For some reason we need to sleep for a second or else the connection will fail
-        #time.sleep(1)
-
-        print("\nConnecting to {0}:{1} as {2}...".format(self.IPADDR, self.PORT, auth[0]))
         try:
             self.ssh.connect(self.IPADDR, self.PORT, username=r'{}'.format(self.AUTH[0]), password=r'{}'.format(self.AUTH[1]))
             self.shell = self.ssh.invoke_shell()

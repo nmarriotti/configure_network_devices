@@ -1,1 +1,3 @@
 configs/
+devices.txt
+*.pyc

@@ -7,12 +7,6 @@ import sys
 import socket, time
 
 # User-defined variables
-local_credentials = ()
-enable_password = ""
-
-# Return dictionary of devices to configure
-devices = FileToDict("devices.txt", "=")
-
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
@@ -34,7 +28,7 @@ def run(commands):
     for name, ipaddr in devices.items():
 
         # Returns the first available protocol
-        protocol = IsPortOpen(ipaddr, ports=[23])
+        protocol = IsPortOpen(ipaddr, ports=[22, 23])
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
@@ -67,6 +61,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
     This script applies network device configurations from an external file
     ''')
+    parser.add_argument("--devices", required=True, help="File containing list of devices")
     parser.add_argument("--username", required=True, help="Account username")
     parser.add_argument("--password", required=True, help="Account password")
     parser.add_argument("--enablepass", required=True, help="Enable password")
@@ -77,9 +72,12 @@ if __name__ == "__main__":
 	# Set global variables from command-line arguments
     credentials = (args.username, args.password)
     enable_password = args.enablepass
-
+ 
     # Set flag to trigger additional output
     verbose = args.verbose
+
+    # Load devices from file
+    devices = FileToDict(args.devices, "=")
 
     # Load the commands from file
     command_list = FileToList(args.commands)

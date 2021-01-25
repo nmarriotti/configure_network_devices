@@ -32,6 +32,7 @@ class Telnet():
         ''' enable mode '''
         self.enable_mode_requested = False
         data = self.tn.read_until(b"Password:",5)
+        print(data)
         if b"Password:" in data:
             response = self.write(self.enablepassword, 1.0)
             if b"#" in response:
@@ -56,34 +57,31 @@ class Telnet():
         
 
 
-    def connect(self, auth, en_password=None, timeout=10):
+    def connect(self, auth, en_password=None, timeout=15):
         ''' Login '''
         self.AUTH = auth
         self.enablepassword = en_password
 
-        # For some reason we need to sleep for a second or else the connection will fail
-        time.sleep(1)
-
+        # Must wait a few seconds for previous socket remnants to be cleaned update
+        time.sleep(3)
+        
         print("\nConnecting to {0}:{1} as {2}...".format(self.IPADDR, self.PORT, auth[0]))
         try:
             # Connect
             self.tn = telnetlib.Telnet(self.IPADDR, self.PORT, timeout)
             
-            time.sleep(2)
-            data = self.tn.read_very_eager().decode('utf-8')
-
+            data = self.tn.read_until(b"Username:",5).decode('utf-8')
+			
             # Check if username is required
             if self.promptedForUsername(data):
                 self.tn.write(auth[0].encode('ascii') + b"\n")
-                time.sleep(1.0)
+                time.sleep(2.0)
 
             data = self.tn.read_until(b"Password:", 5).decode('utf-8')
-
             # Check if password is required
             if self.promptedForPassword(data):
                 self.tn.write(auth[1].encode('ascii') + b"\n")
-                time.sleep(1.0)
-
+                time.sleep(2.0)
             # char '>' signifies successful login
             data = self.tn.read_until(b">", 20)
             print(data.decode('utf-8'))

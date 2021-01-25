@@ -57,16 +57,16 @@ def run(commands):
     for name, ipaddr in devices.items():
 
         # Returns the first available protocol
-        protocol = IsPortOpen(ipaddr, ports=[22,23])
+        protocol = IsPortOpen(ipaddr, ports=[23])
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
             print("No ports available, skipping device...")
             continue
-
+		
         # Creates appropriate object based on protocol
-        device = Builder().construct(protocol)
-        device = device(ipaddr)
+        b = Builder()
+        device = b.construct(protocol)(ipaddr)
 
         # Try accessing device using a domain account
         domain_access = device.connect(auth=domain_credentials, en_password=enable_password)

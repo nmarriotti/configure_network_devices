@@ -20,6 +20,10 @@ switch=192.168.1.2
 
 This is a simple text file containing the commands to execute. Each command should be entered on a separate line.
 
+### Verbosity (--verbose)
+
+Adding the optional _--verbose_ flag will display the standard output returned from the device as each command is executed
+
 ### How to Use
 
 ```

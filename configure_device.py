@@ -10,15 +10,18 @@ import socket, time
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
-    print("Configuring...")
+    sys.stdout.write("Configuring...\n")
+    sys.stdout.flush()
     for command in commands:
         response = device.write(command, 0.2)
         if verbose:
             try:
-                print(response.decode('utf-8'))
+                sys.stdout.write(response.decode('utf-8') + '\n')
             except:
-                print(response[-2].decode('utf-8'))
-    print("Configuration complete.")
+                sys.stdout.write(response[-2].decode('utf-8') + '\n')
+            sys.stdout.flush()
+    sys.stdout.write("Configuration complete.\n")
+    sys.stdout.flush()
     device.disconnect()
 
 
@@ -32,11 +35,13 @@ def run(commands):
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
-            print("No ports available, skipping device...")
+            sys.stdout.write("No ports available, skipping device...\n")
             continue
         else:
-            print("Selected protocol:", protocol.upper())
+            sys.stdout.write("Selected protocol: {0}\n".format(protocol.upper()))
 		
+        sys.stdout.flush()
+
         # Creates appropriate object based on protocol
         b = Builder()
         device = b.construct(protocol)(ipaddr)
@@ -44,15 +49,18 @@ def run(commands):
         time.sleep(3)
 
         # Try connecting to the device
-        print("Connecting to",ipaddr)
+        sys.stdout.write("Connecting to {0}\n".format(ipaddr))
+        sys.stdout.flush()
         connected = device.connect(auth=credentials, en_password=enable_password)
 
         if connected:
-            print("Connected")
+            sys.stdout.write("Connected\n")
+            sys.stdout.flush()
             # login was successful, execute commands
             applyconfig(device, commands)
         else:
-            print("Unable to connect")
+            sys.stdout.write("Unable to connect\n")
+            sys.stdout.flush()
        
 
 
@@ -66,7 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("--password", required=True, help="Account password")
     parser.add_argument("--enablepass", required=True, help="Enable password")
     parser.add_argument("--commands", required=True, help="File containing commands to execute")
-    parser.add_argument("--verbose", required=False, action='store_true', help="Print device output to screen")
+    parser.add_argument("--verbose", required=False, action='store_true', help="sys.stdout.write device output to screen")
     args = parser.parse_args()
 
 	# Set global variables from command-line arguments
@@ -84,9 +92,11 @@ if __name__ == "__main__":
 	
     if command_list:
         # Connect/configure device
-        print("Automated Network Device Configuration")
-        print("======================================")
+        sys.stdout.write("Automated Network Device Configuration\n")
+        sys.stdout.write("======================================\n")
+        sys.stdout.flush()
         run(command_list)
     else:
-        print("There was a problem reading the commands file.")
+        sys.stdout.write("There was a problem reading the commands file.\n")
+        sys.stdout.flush()
         sys.exit(1)

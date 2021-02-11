@@ -10,15 +10,15 @@ import socket, time
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
-    sys.stdout.write("Configuring...\n")
+    sys.stdout.write("\nConfiguring...\n")
     sys.stdout.flush()
     for command in commands:
         response = device.write(command, 0.2)
         if verbose:
             try:
-                sys.stdout.write(response.decode('utf-8') + '\n')
+                sys.stdout.write(response.decode('utf-8').replace("\x08","") + '\n')
             except:
-                sys.stdout.write(response[-2].decode('utf-8') + '\n')
+                sys.stdout.write(response[-2].decode('utf-8').replace("\x08","") + '\n')
             sys.stdout.flush()
     sys.stdout.write("Configuration complete.\n")
     sys.stdout.flush()
@@ -28,6 +28,7 @@ def applyconfig(device, commands):
 
 def run(commands):
     ''' Login and configure each device '''
+    EXIT_CODE = 0
     for name, ipaddr in devices.items():
 
         # Returns the first available protocol
@@ -35,10 +36,10 @@ def run(commands):
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
-            sys.stdout.write("No ports available, skipping device...\n")
+            sys.stderr.write("No ports available for {0}, skipping device...\n".format(ipaddr))
+            sys.stderr.flush()
+            EXIT_CODE = 1
             continue
-        else:
-            sys.stdout.write("Selected protocol: {0}\n".format(protocol.upper()))
 		
         sys.stdout.flush()
 
@@ -49,7 +50,7 @@ def run(commands):
         time.sleep(3)
 
         # Try connecting to the device
-        sys.stdout.write("Connecting to {0}\n".format(ipaddr))
+        sys.stdout.write("Connecting to {0} via {1}\n".format(ipaddr, protocol.upper()))
         sys.stdout.flush()
         connected = device.connect(auth=credentials, en_password=enable_password)
 
@@ -59,8 +60,11 @@ def run(commands):
             # login was successful, execute commands
             applyconfig(device, commands)
         else:
-            sys.stdout.write("Unable to connect\n")
-            sys.stdout.flush()
+            sys.stderr.write("Unable to connect\n")
+            sys.stderr.flush()
+            EXIT_CODE = 1
+	
+    return EXIT_CODE
        
 
 
@@ -95,8 +99,9 @@ if __name__ == "__main__":
         sys.stdout.write("Automated Network Device Configuration\n")
         sys.stdout.write("======================================\n")
         sys.stdout.flush()
-        run(command_list)
+        exit_code = run(command_list)
+        sys.exit(exit_code)
     else:
-        sys.stdout.write("There was a problem reading the commands file.\n")
-        sys.stdout.flush()
+        sys.stderr.write("There was a problem reading the commands file.\n")
+        sys.stderr.flush()
         sys.exit(1)

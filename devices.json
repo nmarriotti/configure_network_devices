@@ -1,0 +1,18 @@
+{
+    "devices": [
+        {
+            "name": "device1",
+            "ip": "192.168.1.250",
+            "username": "admin",
+            "password": "admin",
+            "enablepass": "secret"
+        },
+        {
+            "name": "device2",
+            "ip": "192.168.1.250",
+            "username": "admin",
+            "password": "admin",
+            "enablepass": "secret"
+        }
+    ] 
+}

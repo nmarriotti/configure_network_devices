@@ -1,9 +1,10 @@
 from classes.ClassConstructor import Builder
-from helpers.fileio import FileToList, FileToDict
+from helpers.fileio import FileToList, FileToDict, LoadDevicesFromJson
 from helpers.ports import IsPortOpen
 import argparse
 import sys
 import socket, time
+import json
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
@@ -37,8 +38,12 @@ def applyconfig(device, commands):
 
 def run(commands):
     ''' Login and configure each device '''
-    for name, ipaddr in devices.items():
+    for device in devices:
         
+        ipaddr = device["ip"]
+        credentials = (device["username"], device["password"])
+        enable_password = device["enablepass"]
+
         # Returns the first available protocol
         protocol = IsPortOpen(ipaddr, ports=[22,23])
 
@@ -53,16 +58,16 @@ def run(commands):
 
         # Creates appropriate object based on protocol
         b = Builder()
-        device = b.construct(protocol)(ipaddr)
+        d = b.construct(protocol)(ipaddr)
 
         # Try connecting to the device
-        connected = device.connect(auth=credentials, en_password=enable_password)
+        connected = d.connect(auth=credentials, en_password=enable_password)
 
         if connected:
             sys.stdout.write("Connected!\n")
             sys.stdout.flush()
             # login was successful, execute commands
-            applyconfig(device, commands)
+            applyconfig(d, commands)
         else:
             sys.stdout.write("Unable to connect. Check credentials and try again!\n")
             sys.stdout.flush()
@@ -74,19 +79,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
     This script applies network device configurations from an external file
     ''')
-    parser.add_argument("-u", "--username", required=True, help="Account username")
-    parser.add_argument("-p", "--password", required=True, help="Account password")
-    parser.add_argument("-e", "--enablepass", required=True, help="Enable password")
-    parser.add_argument("-c", "--commands", required=True, help="File containing commands to execute")
+    parser.add_argument("-c", "--commands", required=True, help="File residing in configs/ that contains the commands to execute")
     parser.add_argument("-v", "--verbose", required=False, action='store_true', help="sys.stdout.write device output to screen")
     args = parser.parse_args()
 
     # Return dictionary of devices to configure
-    devices = FileToDict("devices.txt", "=")
-
-    # Set global variables from command-line arguments
-    credentials = (args.username, args.password)
-    enable_password = args.enablepass
+    devices = LoadDevicesFromJson("devices.json")
 
     # Set flag to trigger additional output
     verbose = args.verbose

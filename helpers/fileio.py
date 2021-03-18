@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, json
 
 def FileToList(f):
     try:
@@ -9,6 +9,7 @@ def FileToList(f):
         return l
     except Exception as e:
         sys.stdout.write(str(e) + '\n')
+        sys.stdout.flush()
         sys.exit(1)
     return False
 
@@ -28,5 +29,15 @@ def FileToDict(f, delimiter, remove_quotes=False):
         return d
     except Exception as e:
         sys.stdout.write(str(e) + '\n')
+        sys.stdout.flush()
         sys.exit(1)
     return False
+
+def LoadDevicesFromJson(f):
+    try:
+        with open(f, 'rb') as devices_file:
+            return json.load(devices_file)["devices"]
+    except Exception as e:
+        sys.stdout.write(str(e) + '\n')
+        sys.stdout.flush()
+        sys.exit(1)

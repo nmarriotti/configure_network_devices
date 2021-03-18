@@ -84,14 +84,18 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", required=False, action='store_true', help="print device output to screen")
     args = parser.parse_args()
 
+    basedir = os.path.dirname(os.path.realpath(__file__))
+  
     # Return dictionary of devices to configure
     devices = LoadDevicesFromJson("devices.json")
+    configs_dir = os.path.join(basedir, "configs")
 
     # Set flag to trigger additional output
     verbose = args.verbose
 
     # Load the commands from file
-    command_list = FileToList(os.path.join("configs", args.commands))
+
+    command_list = FileToList(os.path.join(configs_dir, args.commands))
 	
     if command_list:
         # Connect/configure device

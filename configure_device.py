@@ -9,13 +9,22 @@ import socket, time
 def applyconfig(device, commands):
     ''' Write each command to device '''
     print("Configuring...")
+    counter = 0
     for command in commands:
-        response = device.write(command, 0.2)
-        if verbose:
-            try:
-                print(response.decode('utf-8'))
-            except:
-                print(response[-2].decode('utf-8'))
+        counter += 1
+        try:
+            response = device.write(command, 0.2)
+            if verbose:
+                try:
+                    print(response.decode('utf-8'))
+                except:
+                    print(response[-2].decode('utf-8'))
+        except EOFError as e:
+            print("Error executing command #{0} ({1}). The connection is closed.".format(counter, command))
+            return
+        except OSError as e:
+            print("Error executing command #{0} ({1}). The connection is closed.".format(counter, command))
+            return
     print("Configuration complete.")
     device.disconnect()
 
@@ -47,7 +56,7 @@ def run(commands):
             # login was successful, execute commands
             applyconfig(device, commands)
         else:
-            print("Unable to connect")
+            print("Unable to connect. Check credentials and try again!")
        
 
 
@@ -66,7 +75,7 @@ if __name__ == "__main__":
     # Return dictionary of devices to configure
     devices = FileToDict("devices.txt", "=")
 
-	# Set global variables from command-line arguments
+    # Set global variables from command-line arguments
     credentials = (args.username, args.password)
     enable_password = args.enablepass
 

@@ -2,6 +2,7 @@ import telnetlib
 import time
 import datetime
 import paramiko
+import sys
 
 class Telnet():
     def __init__(self, ipaddr, port=23):
@@ -27,7 +28,6 @@ class Telnet():
         return False
 
 
-
     def activateEnableMode(self):
         ''' enable mode '''
         self.enable_mode_requested = False
@@ -41,19 +41,26 @@ class Telnet():
         return False
 
 
-
     def write(self, cmd, sleeptime=0.0):
         ''' Send command '''
         if cmd in self.enable_commands:
-            self.tn.write(cmd.encode('ascii') + b"\n")
-            time.sleep(sleeptime)
-            if not self.activateEnableMode():
-                raise Exception("Enable mode failed.")
+            if not self.enable_mode:
+                self.tn.write(cmd.encode('ascii') + b"\n")
+                time.sleep(sleeptime)
+                if not self.activateEnableMode():
+                    raise Exception("Enable mode failed.")
         else:
             self.tn.write(cmd.encode('ascii') + b"\n")
             time.sleep(sleeptime)
         return self.tn.read_very_eager()
         
+
+    def getAuthPrompt(self):
+        ''' Returns current user credential prompt '''
+        findmatch = self.tn.expect([b"Username:", b"Password:"])
+        if findmatch[0] != -1:
+            return findmatch[1].group(0).decode('utf-8')
+        return False
 
 
     def connect(self, auth, en_password=None, timeout=15):
@@ -67,29 +74,36 @@ class Telnet():
         try:
             # Connect
             self.tn = telnetlib.Telnet(self.IPADDR, self.PORT, timeout)
-            
-            data = self.tn.read_until(b"Username:",5).decode('utf-8')
-			
-            # Check if username is required
-            if self.promptedForUsername(data):
-                self.tn.write(auth[0].encode('ascii') + b"\n")
-                time.sleep(2.0)
 
-            data = self.tn.read_until(b"Password:", 5).decode('utf-8')
-            # Check if password is required
-            if self.promptedForPassword(data):
-                self.tn.write(auth[1].encode('ascii') + b"\n")
-                time.sleep(2.0)
-            # char '>' signifies successful login
-            data = self.tn.read_until(b">", 20)
+            prompt = self.getAuthPrompt()
 
-            if not b">" in data:
+            if prompt:
+                if self.promptedForUsername(prompt):
+                    print("providing username...")
+                    self.tn.write(auth[0].encode('ascii') + b"\n")
+                    #time.sleep(2.0)
+                    prompt = self.getAuthPrompt()
+                
+                if self.promptedForPassword(prompt):
+                    print("providing password...")
+                    self.tn.write(auth[1].encode('ascii') + b"\n")
+                    #time.sleep(2.0)
+
+            # signifies successful login
+            data = self.tn.expect([b">", b"#"])
+
+            if data[0] == -1:
+                # not authenticated
                 return False
             else:
+                auth_symbol = data[1].group(0)
+                if auth_symbol == b"#":
+                    # login defaulted to privileged mode
+                    self.enable_mode = True
                 return True
 
-        except Exception as e:
-            print(str(e))
+        except:
+            pass
         return False
 
 

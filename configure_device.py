@@ -32,7 +32,7 @@ def applyconfig(device, commands):
 def run(commands):
     ''' Login and configure each device '''
     for name, ipaddr in devices.items():
-
+        
         # Returns the first available protocol
         protocol = IsPortOpen(ipaddr, ports=[22,23])
 
@@ -40,21 +40,18 @@ def run(commands):
         if not protocol:
             print("No ports available, skipping device...")
             continue
-        else:
-            print("Selected protocol:", protocol.upper())
 		
+        print("\nConnecting to {0} via {1}".format(ipaddr, protocol.lower()))
+
         # Creates appropriate object based on protocol
         b = Builder()
         device = b.construct(protocol)(ipaddr)
 
-        time.sleep(3)
-
         # Try connecting to the device
-        print("Connecting to",ipaddr)
         connected = device.connect(auth=credentials, en_password=enable_password)
 
         if connected:
-            print("Connected")
+            print("Connected!")
             # login was successful, execute commands
             applyconfig(device, commands)
         else:
@@ -86,8 +83,6 @@ if __name__ == "__main__":
 	
     if command_list:
         # Connect/configure device
-        print("Automated Network Device Configuration")
-        print("======================================")
         run(command_list)
     else:
         print("There was a problem reading the commands file.")

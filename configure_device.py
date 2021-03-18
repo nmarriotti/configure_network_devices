@@ -1,4 +1,3 @@
-#from classes.protocols import Telnet, SSH
 from classes.ClassConstructor import Builder
 from helpers.fileio import FileToList, FileToDict
 from helpers.ports import IsPortOpen

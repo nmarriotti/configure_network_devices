@@ -7,7 +7,8 @@ import socket, time
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
-    print("Configuring...")
+    sys.stdout.write("Configuring...\n")
+    sys.stdout.flush()
     counter = 0
     for command in commands:
         counter += 1
@@ -15,16 +16,21 @@ def applyconfig(device, commands):
             response = device.write(command, 0.2)
             if verbose:
                 try:
-                    print(response.decode('utf-8'))
+                    sys.stdout.write(response.decode('utf-8') + '\n')
+                    sys.stdout.flush()
                 except:
-                    print(response[-2].decode('utf-8'))
-        except EOFError as e:
-            print("Error executing command #{0} ({1}). The connection is closed.".format(counter, command))
+                    sys.stdout.write(response[-2].decode('utf-8') + '\n')
+                    sys.stdout.flush()
+        except EOFError:
+            sys.stdout.write("Error executing command #{0} ({1}). The connection is already closed.\n".format(counter, command))
+            sys.stdout.flush()
             return
-        except OSError as e:
-            print("Error executing command #{0} ({1}). The connection is closed.".format(counter, command))
+        except OSError:
+            sys.stdout.write("Error executing command #{0} ({1}). The connection is already closed.\n".format(counter, command))
+            sys.stdout.flush()
             return
-    print("Configuration complete.")
+    sys.stdout.write("Configuration complete.\n")
+    sys.stdout.flush()
     device.disconnect()
 
 
@@ -38,10 +44,12 @@ def run(commands):
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:
-            print("No ports available, skipping device...")
+            sys.stdout.write("No ports available, skipping device...\n")
+            sys.stdout.flush()
             continue
 		
-        print("\nConnecting to {0} via {1}".format(ipaddr, protocol.lower()))
+        sys.stdout.write("\nConnecting to {0} via {1}\n".format(ipaddr, protocol.lower()))
+        sys.stdout.flush()
 
         # Creates appropriate object based on protocol
         b = Builder()
@@ -51,11 +59,13 @@ def run(commands):
         connected = device.connect(auth=credentials, en_password=enable_password)
 
         if connected:
-            print("Connected!")
+            sys.stdout.write("Connected!\n")
+            sys.stdout.flush()
             # login was successful, execute commands
             applyconfig(device, commands)
         else:
-            print("Unable to connect. Check credentials and try again!")
+            sys.stdout.write("Unable to connect. Check credentials and try again!\n")
+            sys.stdout.flush()
        
 
 
@@ -68,7 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--password", required=True, help="Account password")
     parser.add_argument("-e", "--enablepass", required=True, help="Enable password")
     parser.add_argument("-c", "--commands", required=True, help="File containing commands to execute")
-    parser.add_argument("-v", "--verbose", required=False, action='store_true', help="Print device output to screen")
+    parser.add_argument("-v", "--verbose", required=False, action='store_true', help="sys.stdout.write device output to screen")
     args = parser.parse_args()
 
     # Return dictionary of devices to configure
@@ -88,5 +98,6 @@ if __name__ == "__main__":
         # Connect/configure device
         run(command_list)
     else:
-        print("There was a problem reading the commands file.")
+        sys.stdout.write("There was a problem reading the commands file.\n")
+        sys.stdout.flush()
         sys.exit(1)

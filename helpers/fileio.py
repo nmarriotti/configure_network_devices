@@ -8,7 +8,7 @@ def FileToList(f):
                 l.append(line.strip())
         return l
     except Exception as e:
-        print(str(e))
+        sys.stdout.write(str(e) + '\n')
         sys.exit(1)
     return False
 
@@ -27,6 +27,6 @@ def FileToDict(f, delimiter, remove_quotes=False):
                     pass
         return d
     except Exception as e:
-        print(str(e))
+        sys.stdout.write(str(e) + '\n')
         sys.exit(1)
     return False

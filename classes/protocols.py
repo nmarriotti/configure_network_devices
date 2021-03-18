@@ -107,6 +107,7 @@ class Telnet():
                 auth_symbol = data[1].group(0)
                 if auth_symbol == b"#":
                     # login defaulted to privileged mode
+                    print("Enable mode activated.")
                     self.enable_mode = True
                 return True
 

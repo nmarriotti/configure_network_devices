@@ -36,14 +36,16 @@ class Telnet():
             # we are being prompted for the enable password
             response = self.write(self.enablepassword, 1.0)
             if b"#" in response:
-                print("Enable mode activated.")
+                sys.stdout.write("Enable mode activated.\n")
+                sys.stdout.flush()
                 self.enable_mode = True
                 return True
         else:
             # no prompt for enable password
             data = self.tn.expect([b"#"])
             if data[0] == 0:
-                print("Enable mode activated.")
+                sys.stdout.write("Enable mode activated.\n")
+                sys.stdout.flush()
                 self.enable_mode = True
                 return True
         return False
@@ -87,13 +89,15 @@ class Telnet():
 
             if prompt:
                 if self.promptedForUsername(prompt):
-                    print("providing username...")
+                    sys.stdout.write("providing username...\n")
+                    sys.stdout.flush()
                     self.tn.write(auth[0].encode('ascii') + b"\n")
                     #time.sleep(2.0)
                     prompt = self.getAuthPrompt()
                 
                 if self.promptedForPassword(prompt):
-                    print("providing password...")
+                    sys.stdout.write("providing password...\n")
+                    sys.stdout.flush()
                     self.tn.write(auth[1].encode('ascii') + b"\n")
                     #time.sleep(2.0)
 
@@ -107,7 +111,8 @@ class Telnet():
                 auth_symbol = data[1].group(0)
                 if auth_symbol == b"#":
                     # login defaulted to privileged mode
-                    print("Enable mode activated.")
+                    sys.stdout.write("Enable mode activated.\n")
+                    sys.stdout.flush()
                     self.enable_mode = True
                 return True
 
@@ -151,7 +156,8 @@ class SSH():
             self.connected = True
             return True
         except Exception as e:
-            print(str(e))
+            sys.stdout.write(str(e) + '\n')
+            sys.stdout.flush()
         return False
     
 
@@ -200,11 +206,13 @@ class SSH():
         if b"Password:" in output:
             output = self.write(self.enablepassword, 4.0)[-1]
             if b"#" in output:
-                print("Enable mode activated.")
+                sys.stdout.write("Enable mode activated.\n")
+                sys.stdout.flush()
                 self.enable_mode = True
                 return True
         elif b"#" in output:
-            print("Enable mode activated.")
+            sys.stdout.write("Enable mode activated.\n")
+            sys.stdout.flush()
             self.enable_mode = True
             return True           
         return False

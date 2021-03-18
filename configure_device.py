@@ -34,7 +34,7 @@ def run(commands):
     for name, ipaddr in devices.items():
 
         # Returns the first available protocol
-        protocol = IsPortOpen(ipaddr, ports=[23])
+        protocol = IsPortOpen(ipaddr, ports=[22,23])
 
         # Exit if both SSH and Telnet are unavailable
         if not protocol:

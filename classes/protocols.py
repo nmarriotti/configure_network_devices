@@ -31,10 +31,18 @@ class Telnet():
     def activateEnableMode(self):
         ''' enable mode '''
         self.enable_mode_requested = False
-        data = self.tn.read_until(b"Password:",5)
-        if b"Password:" in data:
+        data = self.tn.expect([b"Password:"])
+        if data[0] != -1:
+            # we are being prompted for the enable password
             response = self.write(self.enablepassword, 1.0)
             if b"#" in response:
+                print("Enable mode activated.")
+                self.enable_mode = True
+                return True
+        else:
+            # no prompt for enable password
+            data = self.tn.expect([b"#"])
+            if data[0] == 0:
                 print("Enable mode activated.")
                 self.enable_mode = True
                 return True

@@ -18,7 +18,6 @@ def IsPortOpen(ip, ports, timeout=3, delay=10, retry=5):
         conn_status = s.connect_ex((ip, port))
 
         if conn_status == 0:
-            retVal =  protocols[port]
-            
-    s.close()
+            retVal =  protocols[port]        
+            s.close()
     return retVal

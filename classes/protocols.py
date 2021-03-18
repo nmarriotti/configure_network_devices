@@ -145,7 +145,7 @@ class SSH():
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         try:
-            self.ssh.connect(self.IPADDR, self.PORT, username=r'{}'.format(self.AUTH[0]), password=r'{}'.format(self.AUTH[1]))
+            self.ssh.connect(self.IPADDR, self.PORT, username=r'{}'.format(self.AUTH[0]), password=r'{}'.format(self.AUTH[1]), look_for_keys=False, allow_agent=False, timeout=5)
             self.shell = self.ssh.invoke_shell()
             self.connected = True
             return True
@@ -202,6 +202,10 @@ class SSH():
                 print("Enable mode activated.")
                 self.enable_mode = True
                 return True
+        elif b"#" in output:
+            print("Enable mode activated.")
+            self.enable_mode = True
+            return True           
         return False
 
 

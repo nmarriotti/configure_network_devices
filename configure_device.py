@@ -6,14 +6,6 @@ import argparse
 import sys
 import socket, time
 
-# User-defined variables
-local_credentials = ()
-enable_password = ""
-
-# Return dictionary of devices to configure
-devices = FileToDict("devices.txt", "=")
-
-
 def applyconfig(device, commands):
     ''' Write each command to device '''
     print("Configuring...")
@@ -64,12 +56,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
     This script applies network device configurations from an external file
     ''')
-    parser.add_argument("--username", required=True, help="Account username")
-    parser.add_argument("--password", required=True, help="Account password")
-    parser.add_argument("--enablepass", required=True, help="Enable password")
-    parser.add_argument("--commands", required=True, help="File containing commands to execute")
-    parser.add_argument("--verbose", required=False, action='store_true', help="Print device output to screen")
+    parser.add_argument("-u", "--username", required=True, help="Account username")
+    parser.add_argument("-p", "--password", required=True, help="Account password")
+    parser.add_argument("-e", "--enablepass", required=True, help="Enable password")
+    parser.add_argument("-c", "--commands", required=True, help="File containing commands to execute")
+    parser.add_argument("-v", "--verbose", required=False, action='store_true', help="Print device output to screen")
     args = parser.parse_args()
+
+    # Return dictionary of devices to configure
+    devices = FileToDict("devices.txt", "=")
 
 	# Set global variables from command-line arguments
     credentials = (args.username, args.password)

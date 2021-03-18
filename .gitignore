@@ -1,3 +1,7 @@
 configs/
+<<<<<<< HEAD
 devices.txt
 *.pyc
+=======
+*.pyc
+>>>>>>> addSSH

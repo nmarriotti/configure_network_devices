@@ -50,3 +50,44 @@ arguments:
   -c COMMANDS,   --commands COMMANDS        File containing commands to execute
   -v,            --verbose                  Print device output to screen
 ```
+
+### Example
+```
+The below example connects to a device preconfigured for telnet and configures it to use SSH. The device is then configured again _(for demonstration purposes only)_ and uses SSH for the new connection.
+$ python3 configure_device.py -c enablessh.txt -v
+
+Connecting to 192.168.1.250 via telnet
+providing username...
+providing password...
+Enable mode activated.
+Connected!
+Configuring...
+
+config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+switch1(config)#
+line vty 0 15
+switch1(config-line)#
+transport input ssh
+switch1(config-line)#
+exit
+switch1(config)#
+exit
+switch1#
+exit
+
+Configuration complete.
+
+Connecting to 192.168.1.250 via ssh
+Connected!
+Configuring...
+Enable mode activated.
+switch1#en
+Enter configuration commands, one per line.  End with CNTL/Z.
+line vty 0 15
+transport input ssh
+exit
+exit
+exit
+Configuration complete.
+```

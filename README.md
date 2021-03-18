@@ -52,8 +52,9 @@ arguments:
 ```
 
 ### Example
-```
 The below example connects to a device preconfigured for telnet and configures it to use SSH. The device is then configured again _(for demonstration purposes only)_ and uses SSH for the new connection.
+
+```
 $ python3 configure_device.py -c enablessh.txt -v
 
 Connecting to 192.168.1.250 via telnet

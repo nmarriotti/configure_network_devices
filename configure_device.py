@@ -5,6 +5,7 @@ import argparse
 import sys
 import socket, time
 import json
+import os
 
 def applyconfig(device, commands):
     ''' Write each command to device '''
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     This script applies network device configurations from an external file
     ''')
     parser.add_argument("-c", "--commands", required=True, help="File residing in configs/ that contains the commands to execute")
-    parser.add_argument("-v", "--verbose", required=False, action='store_true', help="sys.stdout.write device output to screen")
+    parser.add_argument("-v", "--verbose", required=False, action='store_true', help="print device output to screen")
     args = parser.parse_args()
 
     # Return dictionary of devices to configure
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     verbose = args.verbose
 
     # Load the commands from file
-    command_list = FileToList(args.commands)
+    command_list = FileToList(os.path.join("configs", args.commands))
 	
     if command_list:
         # Connect/configure device

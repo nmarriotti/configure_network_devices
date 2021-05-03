@@ -36,14 +36,31 @@ def applyconfig(device, commands):
     device.disconnect()
 
 
+def getCredentials(device):
+    ''' Return credentials for the given device '''
+    try:
+        return (device["username"], device["password"]), device["enablepass"]
+    except:
+        pass
+    return False, False
+
 
 def run(commands):
     ''' Login and configure each device '''
-    for device in devices:
+    for device in devices["devices"]:
         
         ipaddr = device["ip"]
-        credentials = (device["username"], device["password"])
-        enable_password = device["enablepass"]
+
+        # Try to load credentials specific to the device
+        credentials, enable_password = getCredentials(device)
+
+        # No device specific credentials, use global credentials
+        if not credentials:
+            credentials = (devices["username"], devices["password"])
+
+        # No device specific enable pass, use global enable pass
+        if not enable_password:
+            enable_password = devices["enablepass"]
 
         # Returns the first available protocol
         protocol = IsPortOpen(ipaddr, ports=[22,23])

@@ -3,16 +3,16 @@
         {
             "name": "device1",
             "ip": "192.168.1.250",
-            "username": "admin",
-            "password": "admin",
-            "enablepass": "secret"
+            "username": "test",
+            "password": "test",
+            "enablepass": "test"
         },
         {
             "name": "device2",
-            "ip": "192.168.1.250",
-            "username": "admin",
-            "password": "admin",
-            "enablepass": "secret"
+            "ip": "192.168.1.250"
         }
-    ] 
+    ],
+    "username": "admin",
+    "password": "admin",
+    "enablepass": "secret"
 }

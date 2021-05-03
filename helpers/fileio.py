@@ -36,7 +36,7 @@ def FileToDict(f, delimiter, remove_quotes=False):
 def LoadDevicesFromJson(f):
     try:
         with open(f, 'rb') as devices_file:
-            return json.load(devices_file)["devices"]
+            return json.load(devices_file)
     except Exception as e:
         sys.stdout.write(str(e) + '\n')
         sys.stdout.flush()
